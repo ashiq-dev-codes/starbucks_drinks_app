@@ -9,8 +9,6 @@ import 'package:starbucks_drinks_app/shared/theme/app_colors.dart';
 import 'package:starbucks_drinks_app/shared/theme/app_font_size.dart';
 
 const double _kItemHeight = 350;
-const double _kInfoItemHeight = 385;
-const double _kInfoVisibleHeight = _kInfoItemHeight - AppSpacing.unit * 7;
 const double _kOverlap = AppSpacing.unit * 3;
 
 const List<Drink> _drinks = [
@@ -77,6 +75,9 @@ class _DrinkPageState extends State<DrinkPage>
   final ScrollController _infoScrollController = ScrollController();
   late final AnimationController _springController;
   double _springTarget = 0;
+  // Recomputed each build from the available screen height so the info card
+  // always reaches the bottom of the screen instead of using a fixed height.
+  double _infoVisibleHeight = 0;
 
   @override
   void initState() {
@@ -101,7 +102,7 @@ class _DrinkPageState extends State<DrinkPage>
     if (!_pageController.hasClients) return;
     final page = _pageController.page;
     if (page == null) return;
-    final target = page * _kInfoVisibleHeight;
+    final target = page * _infoVisibleHeight;
     if ((target - _springTarget).abs() < 0.01) return;
     _springTarget = target;
     _springController.animateWith(
@@ -132,47 +133,58 @@ class _DrinkPageState extends State<DrinkPage>
       // paints Starbucks green behind everything.
       backgroundColor: AppColors.primary,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.unit * 4),
-          child: SizedBox(
-            height: _kItemHeight + _kInfoItemHeight - _kOverlap,
-            child: Stack(
-              children: [
-                Positioned(
-                  top: _kItemHeight - _kOverlap,
-                  left: AppSpacing.unit * 2,
-                  right: AppSpacing.unit * 2,
-                  height: _kInfoItemHeight,
-                  child: _InfoCard(infoScrollController: _infoScrollController),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: _kItemHeight,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    // RN's Image sets `overflow: "visible"` so its native shadow
-                    // can bleed past the image's own box — PageView's viewport
-                    // clips by default, which is what was hard-cutting our
-                    // blurred shadow at each item's bottom edge.
-                    clipBehavior: Clip.none,
-                    physics: const _SnapPageScrollPhysics(
-                      parent: ClampingScrollPhysics(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Fill exactly down to the bottom of the screen instead of a
+            // fixed height, so the card's bottom edge always meets the
+            // safe area rather than leaving a gap.
+            _infoVisibleHeight =
+                constraints.maxHeight -
+                (_kItemHeight - _kOverlap) -
+                AppSpacing.unit * 7;
+            return Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: _kItemHeight - _kOverlap,
+                    left: AppSpacing.unit * 2,
+                    right: AppSpacing.unit * 2,
+                    bottom: 0,
+                    child: _InfoCard(
+                      itemHeight: _infoVisibleHeight,
+                      infoScrollController: _infoScrollController,
                     ),
-                    itemCount: _drinks.length,
-                    itemBuilder: (context, index) {
-                      return DrinkCarouselItem(
-                        drink: _drinks[index],
-                        index: index,
-                        pageController: _pageController,
-                      );
-                    },
                   ),
-                ),
-              ],
-            ),
-          ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: _kItemHeight,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      // RN's Image sets `overflow: "visible"` so its native shadow
+                      // can bleed past the image's own box — PageView's viewport
+                      // clips by default, which is what was hard-cutting our
+                      // blurred shadow at each item's bottom edge.
+                      clipBehavior: Clip.none,
+                      physics: const _SnapPageScrollPhysics(
+                        parent: ClampingScrollPhysics(),
+                      ),
+                      itemCount: _drinks.length,
+                      itemBuilder: (context, index) {
+                        return DrinkCarouselItem(
+                          drink: _drinks[index],
+                          index: index,
+                          pageController: _pageController,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -195,16 +207,20 @@ class _SnapPageScrollPhysics extends PageScrollPhysics {
 }
 
 class _InfoCard extends StatelessWidget {
-  const _InfoCard({required this.infoScrollController});
+  const _InfoCard({
+    required this.infoScrollController,
+    required this.itemHeight,
+  });
 
   final ScrollController infoScrollController;
+  final double itemHeight;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
-        borderRadius: BorderRadius.circular(AppSpacing.unit * 3),
+        borderRadius: BorderRadius.circular(AppSpacing.unit * 2),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.unit * 3),
@@ -215,10 +231,8 @@ class _InfoCard extends StatelessWidget {
                 controller: infoScrollController,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _drinks.length,
-                itemBuilder: (context, index) => DrinkInfoCard(
-                  drink: _drinks[index],
-                  height: _kInfoVisibleHeight,
-                ),
+                itemBuilder: (context, index) =>
+                    DrinkInfoCard(drink: _drinks[index], height: itemHeight),
               ),
             ),
             Padding(
@@ -250,8 +264,10 @@ class _GetItButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSpacing.unit * 3),
           boxShadow: [
             BoxShadow(
-              color: DrinkColors.black.withValues(alpha: 0.3),
+              blurRadius: 5,
+              spreadRadius: 0,
               offset: const Offset(5, 5),
+              color: DrinkColors.black.withValues(alpha: 0.3),
             ),
           ],
         ),

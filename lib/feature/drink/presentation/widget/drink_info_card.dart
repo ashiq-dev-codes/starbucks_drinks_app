@@ -15,9 +15,10 @@ class DrinkInfoCard extends StatelessWidget {
     return SizedBox(
       height: height,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.unit * 2,
-          vertical: AppSpacing.unit * 5,
+        padding: const EdgeInsets.only(
+          top: AppSpacing.unit * 5,
+          left: AppSpacing.unit * 2,
+          right: AppSpacing.unit * 2,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +45,7 @@ class DrinkInfoCard extends StatelessWidget {
             Expanded(
               child: Text(
                 drink.description,
-                maxLines: 7,
+                maxLines: 9,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: AppFontSize.small,
