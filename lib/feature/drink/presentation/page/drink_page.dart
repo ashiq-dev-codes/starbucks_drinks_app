@@ -139,14 +139,18 @@ class _DrinkPageState extends State<DrinkPage>
     if ((page - _springTarget).abs() < 0.0001) return;
     _springTarget = page;
     _springController.animateWith(
-      // Critically damped (damping = 2*sqrt(mass*stiffness)): catches up to
-      // the new target quickly with no bounce/overshoot, for a snappier feel
-      // than Reanimated's underdamped default.
+      // Critically damped (damping = 2*sqrt(mass*stiffness)) so it never
+      // overshoots, tuned softer than a snap so the follower glides into
+      // place instead of visibly teleporting frame-to-frame. A live drag
+      // re-targets this simulation on nearly every frame — carrying over
+      // the current velocity (instead of resetting to 0 each time) is what
+      // keeps that a single continuous glide rather than a stutter that
+      // brakes to a stop and re-accelerates on every retarget.
       SpringSimulation(
-        const SpringDescription(mass: 1, stiffness: 400, damping: 40),
+        const SpringDescription(mass: 1, stiffness: 180, damping: 26.8),
         _springController.value,
         page,
-        0,
+        _springController.velocity,
       ),
     );
   }
@@ -225,7 +229,7 @@ class _DrinkPageState extends State<DrinkPage>
                         // blurred shadow at each item's bottom edge.
                         clipBehavior: Clip.none,
                         physics: const _SnapPageScrollPhysics(
-                          parent: ClampingScrollPhysics(),
+                          parent: BouncingScrollPhysics(),
                         ),
                         itemCount: _drinks.length,
                         itemBuilder: (context, index) {
@@ -252,8 +256,9 @@ class _DrinkPageState extends State<DrinkPage>
 // i.e. which one the spring should treat as the source of truth right now.
 enum _SyncSource { page, info }
 
-// A stiffer, critically-damped settle spring than PageScrollPhysics' default,
-// so a page snaps into place quickly instead of drifting/bouncing into it.
+// A softer, still critically-damped settle spring than PageScrollPhysics'
+// default, so a released page glides into place rather than drifting slowly
+// or snapping abruptly.
 class _SnapPageScrollPhysics extends PageScrollPhysics {
   const _SnapPageScrollPhysics({super.parent});
 
@@ -264,7 +269,7 @@ class _SnapPageScrollPhysics extends PageScrollPhysics {
 
   @override
   SpringDescription get spring =>
-      SpringDescription.withDampingRatio(mass: 0.5, stiffness: 400, ratio: 1);
+      SpringDescription.withDampingRatio(mass: 0.5, stiffness: 220, ratio: 1);
 }
 
 class _InfoCard extends StatelessWidget {
@@ -302,7 +307,7 @@ class _InfoCard extends StatelessWidget {
                   controller: infoPageController,
                   scrollDirection: Axis.vertical,
                   physics: const _SnapPageScrollPhysics(
-                    parent: ClampingScrollPhysics(),
+                    parent: BouncingScrollPhysics(),
                   ),
                   itemCount: _drinks.length,
                   itemBuilder: (context, index) =>
