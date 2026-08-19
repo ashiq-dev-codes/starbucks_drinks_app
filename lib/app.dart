@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starbucks_drinks_app/feature/drink/presentation/page/drink_page.dart';
 
 import 'shared/theme/app_theme.dart';
 
@@ -11,9 +12,7 @@ class App extends StatelessWidget {
       title: 'Starbucks Drinks App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const Scaffold(
-        body: Center(child: Text('Starbucks Drinks App')),
-      ),
+      home: const DrinkPage(),
     );
   }
 }
