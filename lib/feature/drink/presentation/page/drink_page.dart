@@ -72,9 +72,25 @@ class DrinkPage extends StatefulWidget {
 class _DrinkPageState extends State<DrinkPage>
     with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController(viewportFraction: 0.5);
-  final ScrollController _infoScrollController = ScrollController();
+  final PageController _infoPageController = PageController();
   late final AnimationController _springController;
+  // The shared coordinate both controllers sync through: a fractional page
+  // index (0..itemCount-1), independent of either controller's own pixel
+  // geometry (viewportDimension/viewportFraction differ between the two).
   double _springTarget = 0;
+  // Whichever controller the user is actually dragging right now owns the
+  // spring; the other one is the follower for that spring run. This is set
+  // ONLY by a genuine drag-start gesture (see the NotificationListeners in
+  // build()) — never by a controller's own page-changed listener — so that
+  // a controller's residual settle/snap animation (from ITS OWN earlier
+  // partial drag) can't steal control away from whichever side the user is
+  // actively touching right now. Without that guard, two independently
+  // physics-driven PageViews fight over which one drives the other.
+  _SyncSource _activeSyncSource = _SyncSource.page;
+  // Guards against feedback loops: set while we're programmatically moving a
+  // controller so its own listener doesn't treat that as a new user scroll.
+  bool _isProgrammaticPageChange = false;
+  bool _isProgrammaticInfoChange = false;
   // Recomputed each build from the available screen height so the info card
   // always reaches the bottom of the screen instead of using a fixed height.
   double _infoVisibleHeight = 0;
@@ -85,26 +101,43 @@ class _DrinkPageState extends State<DrinkPage>
     _springController = AnimationController.unbounded(vsync: this)
       ..addListener(_followSpring);
     _pageController.addListener(_handlePageChanged);
+    _infoPageController.addListener(_handleInfoPageChanged);
   }
 
   @override
   void dispose() {
     _pageController.removeListener(_handlePageChanged);
     _pageController.dispose();
-    _infoScrollController.dispose();
+    _infoPageController.removeListener(_handleInfoPageChanged);
+    _infoPageController.dispose();
     _springController.dispose();
     super.dispose();
   }
 
-  // Mirrors the RN source's `scrollYOffset.value = withSpring(scrollY)`:
-  // every scroll frame nudges the vertical panel's spring target.
   void _handlePageChanged() {
-    if (!_pageController.hasClients) return;
+    if (_isProgrammaticPageChange || !_pageController.hasClients) return;
     final page = _pageController.page;
     if (page == null) return;
-    final target = page * _infoVisibleHeight;
-    if ((target - _springTarget).abs() < 0.01) return;
-    _springTarget = target;
+    _driveSpring(_SyncSource.page, page);
+  }
+
+  void _handleInfoPageChanged() {
+    if (_isProgrammaticInfoChange || !_infoPageController.hasClients) return;
+    final page = _infoPageController.page;
+    if (page == null) return;
+    _driveSpring(_SyncSource.info, page);
+  }
+
+  // Mirrors the RN source's `scrollYOffset.value = withSpring(scrollY)`:
+  // every scroll frame nudges the follower's spring target, in both
+  // directions, so dragging either the carousel or the info card keeps them
+  // in sync. Only trusted from whichever controller currently owns
+  // _activeSyncSource (see its doc comment) — a page-changed event from the
+  // other one is residual motion, not a new drive command, so it's ignored.
+  void _driveSpring(_SyncSource source, double page) {
+    if (_activeSyncSource != source) return;
+    if ((page - _springTarget).abs() < 0.0001) return;
+    _springTarget = page;
     _springController.animateWith(
       // Critically damped (damping = 2*sqrt(mass*stiffness)): catches up to
       // the new target quickly with no bounce/overshoot, for a snappier feel
@@ -112,16 +145,30 @@ class _DrinkPageState extends State<DrinkPage>
       SpringSimulation(
         const SpringDescription(mass: 1, stiffness: 400, damping: 40),
         _springController.value,
-        target,
+        page,
         0,
       ),
     );
   }
 
   void _followSpring() {
-    if (_infoScrollController.hasClients) {
-      _infoScrollController.jumpTo(_springController.value);
+    final isInfoDriven = _activeSyncSource == _SyncSource.info;
+    final follower = isInfoDriven ? _pageController : _infoPageController;
+    if (!follower.hasClients) return;
+    final position = follower.position;
+    final dimension = position.viewportDimension * follower.viewportFraction;
+    final pixels = (_springController.value * dimension).clamp(
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    );
+    if (isInfoDriven) {
+      _isProgrammaticPageChange = true;
+    } else {
+      _isProgrammaticInfoChange = true;
     }
+    follower.jumpTo(pixels);
+    _isProgrammaticPageChange = false;
+    _isProgrammaticInfoChange = false;
   }
 
   @override
@@ -143,7 +190,7 @@ class _DrinkPageState extends State<DrinkPage>
                 (_kItemHeight - _kOverlap) -
                 AppSpacing.unit * 7;
             return Padding(
-              padding: const EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 30, bottom: 30),
               child: Stack(
                 children: [
                   Positioned(
@@ -153,7 +200,8 @@ class _DrinkPageState extends State<DrinkPage>
                     bottom: 0,
                     child: _InfoCard(
                       itemHeight: _infoVisibleHeight,
-                      infoScrollController: _infoScrollController,
+                      infoPageController: _infoPageController,
+                      onUserDragStart: () => _activeSyncSource = _SyncSource.info,
                     ),
                   ),
                   Positioned(
@@ -161,24 +209,33 @@ class _DrinkPageState extends State<DrinkPage>
                     left: 0,
                     right: 0,
                     height: _kItemHeight,
-                    child: PageView.builder(
-                      controller: _pageController,
-                      // RN's Image sets `overflow: "visible"` so its native shadow
-                      // can bleed past the image's own box — PageView's viewport
-                      // clips by default, which is what was hard-cutting our
-                      // blurred shadow at each item's bottom edge.
-                      clipBehavior: Clip.none,
-                      physics: const _SnapPageScrollPhysics(
-                        parent: ClampingScrollPhysics(),
-                      ),
-                      itemCount: _drinks.length,
-                      itemBuilder: (context, index) {
-                        return DrinkCarouselItem(
-                          drink: _drinks[index],
-                          index: index,
-                          pageController: _pageController,
-                        );
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification is ScrollStartNotification &&
+                            notification.dragDetails != null) {
+                          _activeSyncSource = _SyncSource.page;
+                        }
+                        return false;
                       },
+                      child: PageView.builder(
+                        controller: _pageController,
+                        // RN's Image sets `overflow: "visible"` so its native shadow
+                        // can bleed past the image's own box — PageView's viewport
+                        // clips by default, which is what was hard-cutting our
+                        // blurred shadow at each item's bottom edge.
+                        clipBehavior: Clip.none,
+                        physics: const _SnapPageScrollPhysics(
+                          parent: ClampingScrollPhysics(),
+                        ),
+                        itemCount: _drinks.length,
+                        itemBuilder: (context, index) {
+                          return DrinkCarouselItem(
+                            drink: _drinks[index],
+                            index: index,
+                            pageController: _pageController,
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -190,6 +247,10 @@ class _DrinkPageState extends State<DrinkPage>
     );
   }
 }
+
+// Which controller most recently moved for a real (non-programmatic) reason,
+// i.e. which one the spring should treat as the source of truth right now.
+enum _SyncSource { page, info }
 
 // A stiffer, critically-damped settle spring than PageScrollPhysics' default,
 // so a page snaps into place quickly instead of drifting/bouncing into it.
@@ -208,12 +269,14 @@ class _SnapPageScrollPhysics extends PageScrollPhysics {
 
 class _InfoCard extends StatelessWidget {
   const _InfoCard({
-    required this.infoScrollController,
+    required this.infoPageController,
     required this.itemHeight,
+    required this.onUserDragStart,
   });
 
-  final ScrollController infoScrollController;
+  final PageController infoPageController;
   final double itemHeight;
+  final VoidCallback onUserDragStart;
 
   @override
   Widget build(BuildContext context) {
@@ -227,12 +290,24 @@ class _InfoCard extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                controller: infoScrollController,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _drinks.length,
-                itemBuilder: (context, index) =>
-                    DrinkInfoCard(drink: _drinks[index], height: itemHeight),
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification is ScrollStartNotification &&
+                      notification.dragDetails != null) {
+                    onUserDragStart();
+                  }
+                  return false;
+                },
+                child: PageView.builder(
+                  controller: infoPageController,
+                  scrollDirection: Axis.vertical,
+                  physics: const _SnapPageScrollPhysics(
+                    parent: ClampingScrollPhysics(),
+                  ),
+                  itemCount: _drinks.length,
+                  itemBuilder: (context, index) =>
+                      DrinkInfoCard(drink: _drinks[index], height: itemHeight),
+                ),
               ),
             ),
             Padding(

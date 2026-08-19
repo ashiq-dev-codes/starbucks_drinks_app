@@ -45,7 +45,7 @@ class DrinkInfoCard extends StatelessWidget {
             Expanded(
               child: Text(
                 drink.description,
-                maxLines: 9,
+                maxLines: 7,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: AppFontSize.small,
