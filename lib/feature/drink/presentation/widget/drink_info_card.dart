@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:starbucks_drinks_app/feature/drink/model/drink.dart';
 import 'package:starbucks_drinks_app/feature/drink/presentation/drink_colors.dart';
 import 'package:starbucks_drinks_app/shared/constant/app_spacing.dart';
-import 'package:starbucks_drinks_app/shared/theme/app_font.dart';
 import 'package:starbucks_drinks_app/shared/theme/app_font_size.dart';
 
 class DrinkInfoCard extends StatelessWidget {
@@ -26,7 +25,6 @@ class DrinkInfoCard extends StatelessWidget {
             Text(
               drink.price,
               style: const TextStyle(
-                fontFamily: AppFont.poppins,
                 fontSize: AppFontSize.xLarge,
                 fontWeight: FontWeight.w700,
               ),
@@ -38,8 +36,7 @@ class DrinkInfoCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontFamily: AppFont.poppins,
-                  fontSize: AppFontSize.large,
+                    fontSize: AppFontSize.large,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -50,8 +47,7 @@ class DrinkInfoCard extends StatelessWidget {
                 maxLines: 7,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontFamily: AppFont.poppins,
-                  fontSize: AppFontSize.small,
+                    fontSize: AppFontSize.small,
                   fontWeight: FontWeight.w400,
                   color: DrinkColors.lightText,
                 ),

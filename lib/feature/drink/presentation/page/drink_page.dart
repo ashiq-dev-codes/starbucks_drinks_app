@@ -6,7 +6,6 @@ import 'package:starbucks_drinks_app/feature/drink/presentation/widget/drink_car
 import 'package:starbucks_drinks_app/feature/drink/presentation/widget/drink_info_card.dart';
 import 'package:starbucks_drinks_app/shared/constant/app_spacing.dart';
 import 'package:starbucks_drinks_app/shared/theme/app_colors.dart';
-import 'package:starbucks_drinks_app/shared/theme/app_font.dart';
 import 'package:starbucks_drinks_app/shared/theme/app_font_size.dart';
 
 const double _kItemHeight = 350;
@@ -20,8 +19,7 @@ const List<Drink> _drinks = [
     title: 'Chocolate Cream Chip Frappuccino',
     price: r'$14',
     type: 'Blended Beverage',
-    description:
-        'Rich mocha-flavored sauce blended with milk, chocolaty chips and ice. Topped with sweetened whipped cream and chocolate-flavored drizzle. This creation is the non-coffee alternative to our famous Java Chip Frappuccino. It is a decadent beverage for those who love the taste of chocolate – and lots of it. Rich, chocolaty chips punctuate a cool, refreshing blend of milk and mocha flavors. And in case that isn\'t enough chocolaty goodness for you, we finish our sweetened whipped cream topping with a deliciously sweet chocolate-flavored drizzle.',
+    description: 'Rich mocha-flavored sauce blended with milk, chocolaty chips and ice. Topped with sweetened whipped cream and chocolate-flavored drizzle. This creation is the non-coffee alternative to our famous Java Chip Frappuccino. It is a decadent beverage for those who love the taste of chocolate – and lots of it. Rich, chocolaty chips punctuate a cool, refreshing blend of milk and mocha flavors. And in case that isn\'t enough chocolaty goodness for you, we finish our sweetened whipped cream topping with a deliciously sweet chocolate-flavored drizzle.',
     imageAsset: 'assets/images/drinks/chocolate_cream_chip_frappuccino.png',
   ),
   Drink(
@@ -29,8 +27,7 @@ const List<Drink> _drinks = [
     title: 'Dark Mocha Frappuccino',
     price: r'$14',
     type: 'Blended Beverage',
-    description:
-        'For serious chocolate lovers: We blend dark cocoa with milk, ice and coffee for an extraordinarily chocolatey experience that\'s then topped with a swirl of whipped cream.',
+    description: 'For serious chocolate lovers: We blend dark cocoa with milk, ice and coffee for an extraordinarily chocolatey experience that\'s then topped with a swirl of whipped cream.',
     imageAsset: 'assets/images/drinks/dark_mocha_frappuccino.png',
   ),
   Drink(
@@ -38,8 +35,7 @@ const List<Drink> _drinks = [
     title: 'Java Chip Frappuccino',
     price: r'$14',
     type: 'Blended Beverage',
-    description:
-        'Coffee with rich mocha-flavored sauce blended with milk, chocolaty chips and ice. Topped with sweetened whipped cream and chocolate-flavored drizzle. We created this wondrously decadent beverage for those who love the taste of chocolate – and lots of it – with their iced coffee. Rich, chocolaty chips punctuate a cool, refreshing blend of coffee and mocha flavors. And in case that isn\'t enough chocolaty goodness for you, we finish our sweetened whipped cream topping with a deliciously sweet chocolate-flavored drizzle.',
+    description: 'Coffee with rich mocha-flavored sauce blended with milk, chocolaty chips and ice. Topped with sweetened whipped cream and chocolate-flavored drizzle. We created this wondrously decadent beverage for those who love the taste of chocolate – and lots of it – with their iced coffee. Rich, chocolaty chips punctuate a cool, refreshing blend of coffee and mocha flavors. And in case that isn\'t enough chocolaty goodness for you, we finish our sweetened whipped cream topping with a deliciously sweet chocolate-flavored drizzle.',
     imageAsset: 'assets/images/drinks/java_chip_frappuccino.png',
   ),
   Drink(
@@ -47,8 +43,7 @@ const List<Drink> _drinks = [
     title: 'Green Tea Cream Frappuccino',
     price: r'$14',
     type: 'Blended Beverage',
-    description:
-        'A refreshing blend of sweetened matcha green tea, milk and ice. Topped with sweetened whipped cream. Although matcha tea is best known for its central role in the serene ritual known as the Japanese tea ceremony, tea drinkers all over the world have come to enjoy the gentle, uplifting taste of this finely-powdered green tea in their own way. We particularly like the way it blends with milk and ice in this refreshing Frappuccino® blended beverage. And we think you will too.',
+    description: 'A refreshing blend of sweetened matcha green tea, milk and ice. Topped with sweetened whipped cream. Although matcha tea is best known for its central role in the serene ritual known as the Japanese tea ceremony, tea drinkers all over the world have come to enjoy the gentle, uplifting taste of this finely-powdered green tea in their own way. We particularly like the way it blends with milk and ice in this refreshing Frappuccino® blended beverage. And we think you will too.',
     imageAsset: 'assets/images/drinks/green_tea_cream_frappuccino.png',
   ),
   Drink(
@@ -56,8 +51,7 @@ const List<Drink> _drinks = [
     title: 'Vanilla Sweet Cream Cold Brew',
     price: r'$14',
     type: 'Coffee & Espresso',
-    description:
-        'Cold Brew topped with a delicate float of house-made vanilla sweet cream that cascades throughout the cup. We use a unique craft-brewing process to create a super smooth tasting coffee. While making our Cold Brew, the coffee never comes into contact with hot water. Instead, the coffee is slow-steeped in cool water for more than 10 hours and is handcrafted in small batches each day. To create our signature recipe, our team spent months experimenting with different brew times and coffee varietals. We specifically developed the Starbucks® Cold Brew Blend to heighten the rich, naturally sweet flavor created during the cold brewing process. The blend incorporates African and Latin American coffees.',
+    description: 'Cold Brew topped with a delicate float of house-made vanilla sweet cream that cascades throughout the cup. We use a unique craft-brewing process to create a super smooth tasting coffee. While making our Cold Brew, the coffee never comes into contact with hot water. Instead, the coffee is slow-steeped in cool water for more than 10 hours and is handcrafted in small batches each day. To create our signature recipe, our team spent months experimenting with different brew times and coffee varietals. We specifically developed the Starbucks® Cold Brew Blend to heighten the rich, naturally sweet flavor created during the cold brewing process. The blend incorporates African and Latin American coffees.',
     imageAsset: 'assets/images/drinks/vanilla_sweet_cream_cold_brew.png',
   ),
   Drink(
@@ -65,8 +59,7 @@ const List<Drink> _drinks = [
     title: 'Cold Brew',
     price: r'$14',
     type: 'Coffee & Espresso',
-    description:
-        'Slow-steeped, small-batch and super smooth. We use a unique craft-brewing process to create a super smooth tasting coffee. While making our Cold Brew, the coffee never comes into contact with hot water. Instead, the coffee is slow-steeped in cool water for 20 hours, no more no less and is handcrafted in small batches each day. To create our signature recipe, our team spent months experimenting with different brew times and coffee varietals. We specifically developed the Starbucks® Cold Brew Blend to heighten the rich, naturally sweet flavor created during the cold brewing process. The blend incorporates African and Latin American coffees.',
+    description: 'Slow-steeped, small-batch and super smooth. We use a unique craft-brewing process to create a super smooth tasting coffee. While making our Cold Brew, the coffee never comes into contact with hot water. Instead, the coffee is slow-steeped in cool water for 20 hours, no more no less and is handcrafted in small batches each day. To create our signature recipe, our team spent months experimenting with different brew times and coffee varietals. We specifically developed the Starbucks® Cold Brew Blend to heighten the rich, naturally sweet flavor created during the cold brewing process. The blend incorporates African and Latin American coffees.',
     imageAsset: 'assets/images/drinks/cold_brew.png',
   ),
 ];
@@ -112,8 +105,11 @@ class _DrinkPageState extends State<DrinkPage>
     if ((target - _springTarget).abs() < 0.01) return;
     _springTarget = target;
     _springController.animateWith(
+      // Critically damped (damping = 2*sqrt(mass*stiffness)): catches up to
+      // the new target quickly with no bounce/overshoot, for a snappier feel
+      // than Reanimated's underdamped default.
       SpringSimulation(
-        const SpringDescription(mass: 1, stiffness: 100, damping: 10),
+        const SpringDescription(mass: 1, stiffness: 400, damping: 40),
         _springController.value,
         target,
         0,
@@ -127,17 +123,14 @@ class _DrinkPageState extends State<DrinkPage>
     }
   }
 
-  double get _currentPage {
-    if (!_pageController.hasClients) {
-      return _pageController.initialPage.toDouble();
-    }
-    return _pageController.page ?? _pageController.initialPage.toDouble();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // The RN screen itself sets no background — this green comes from
+      // _layout.tsx's ThemeProvider, which spreads Colors (background: "#006241")
+      // over React Navigation's theme, so the native-stack screen container
+      // paints Starbucks green behind everything.
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.unit * 4),
@@ -157,23 +150,17 @@ class _DrinkPageState extends State<DrinkPage>
                   left: 0,
                   right: 0,
                   height: _kItemHeight,
-                  child: AnimatedBuilder(
-                    animation: _pageController,
-                    builder: (context, _) {
-                      return PageView.builder(
-                        controller: _pageController,
-                        physics: const PageScrollPhysics(
-                          parent: ClampingScrollPhysics(),
-                        ),
-                        itemCount: _drinks.length,
-                        itemBuilder: (context, index) {
-                          final diff = (_currentPage - index).abs();
-                          final scale = (1 - 0.5 * diff).clamp(0.0, 1.0);
-                          return DrinkCarouselItem(
-                            drink: _drinks[index],
-                            scale: scale,
-                          );
-                        },
+                  child: PageView.builder(
+                    controller: _pageController,
+                    physics: const _SnapPageScrollPhysics(
+                      parent: ClampingScrollPhysics(),
+                    ),
+                    itemCount: _drinks.length,
+                    itemBuilder: (context, index) {
+                      return DrinkCarouselItem(
+                        drink: _drinks[index],
+                        index: index,
+                        pageController: _pageController,
                       );
                     },
                   ),
@@ -185,6 +172,21 @@ class _DrinkPageState extends State<DrinkPage>
       ),
     );
   }
+}
+
+// A stiffer, critically-damped settle spring than PageScrollPhysics' default,
+// so a page snaps into place quickly instead of drifting/bouncing into it.
+class _SnapPageScrollPhysics extends PageScrollPhysics {
+  const _SnapPageScrollPhysics({super.parent});
+
+  @override
+  _SnapPageScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return _SnapPageScrollPhysics(parent: buildParent(ancestor));
+  }
+
+  @override
+  SpringDescription get spring =>
+      SpringDescription.withDampingRatio(mass: 0.5, stiffness: 400, ratio: 1);
 }
 
 class _InfoCard extends StatelessWidget {
@@ -253,7 +255,6 @@ class _GetItButton extends StatelessWidget {
             'Get it',
             style: TextStyle(
               color: AppColors.whiteColor,
-              fontFamily: AppFont.poppins,
               fontSize: AppFontSize.large,
               fontWeight: FontWeight.w600,
             ),
