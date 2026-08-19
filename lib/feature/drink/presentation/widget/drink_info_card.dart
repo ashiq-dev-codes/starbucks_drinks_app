@@ -36,7 +36,7 @@ class DrinkInfoCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                    fontSize: AppFontSize.large,
+                  fontSize: AppFontSize.large,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -47,7 +47,7 @@ class DrinkInfoCard extends StatelessWidget {
                 maxLines: 7,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                    fontSize: AppFontSize.small,
+                  fontSize: AppFontSize.small,
                   fontWeight: FontWeight.w400,
                   color: DrinkColors.lightText,
                 ),

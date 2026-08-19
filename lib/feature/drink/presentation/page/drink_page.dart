@@ -152,6 +152,11 @@ class _DrinkPageState extends State<DrinkPage>
                   height: _kItemHeight,
                   child: PageView.builder(
                     controller: _pageController,
+                    // RN's Image sets `overflow: "visible"` so its native shadow
+                    // can bleed past the image's own box — PageView's viewport
+                    // clips by default, which is what was hard-cutting our
+                    // blurred shadow at each item's bottom edge.
+                    clipBehavior: Clip.none,
                     physics: const _SnapPageScrollPhysics(
                       parent: ClampingScrollPhysics(),
                     ),

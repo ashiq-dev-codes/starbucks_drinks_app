@@ -25,6 +25,7 @@ class DrinkCarouselItem extends StatelessWidget {
       child: AnimatedBuilder(
         animation: pageController,
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
             Positioned.fill(
               child: Transform.translate(
