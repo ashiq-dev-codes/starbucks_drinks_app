@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:starbucks_drinks_app/feature/drink/model/drink.dart';
+import 'package:starbucks_drinks_app/feature/drink/presentation/drink_colors.dart';
 import 'package:starbucks_drinks_app/feature/drink/presentation/widget/drink_carousel_item.dart';
 import 'package:starbucks_drinks_app/feature/drink/presentation/widget/drink_info_card.dart';
 import 'package:starbucks_drinks_app/shared/constant/app_spacing.dart';
@@ -238,11 +239,11 @@ class _GetItButton extends StatelessWidget {
       height: AppSpacing.unit * 5,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.blackColor,
+          color: DrinkColors.black,
           borderRadius: BorderRadius.circular(AppSpacing.unit * 3),
           boxShadow: [
             BoxShadow(
-              color: AppColors.blackColor.withValues(alpha: 0.3),
+              color: DrinkColors.black.withValues(alpha: 0.3),
               offset: const Offset(5, 5),
             ),
           ],

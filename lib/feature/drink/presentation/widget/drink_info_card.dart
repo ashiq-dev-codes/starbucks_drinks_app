@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:starbucks_drinks_app/feature/drink/model/drink.dart';
+import 'package:starbucks_drinks_app/feature/drink/presentation/drink_colors.dart';
 import 'package:starbucks_drinks_app/shared/constant/app_spacing.dart';
-import 'package:starbucks_drinks_app/shared/theme/app_colors.dart';
 import 'package:starbucks_drinks_app/shared/theme/app_font.dart';
 import 'package:starbucks_drinks_app/shared/theme/app_font_size.dart';
 
@@ -53,7 +53,7 @@ class DrinkInfoCard extends StatelessWidget {
                   fontFamily: AppFont.poppins,
                   fontSize: AppFontSize.small,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.textSecondary,
+                  color: DrinkColors.lightText,
                 ),
               ),
             ),

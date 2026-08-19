@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:starbucks_drinks_app/feature/drink/model/drink.dart';
+import 'package:starbucks_drinks_app/feature/drink/presentation/drink_colors.dart';
 
 class DrinkCarouselItem extends StatelessWidget {
   const DrinkCarouselItem({super.key, required this.drink, required this.scale});
@@ -24,7 +25,7 @@ class DrinkCarouselItem extends StatelessWidget {
                 imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                    Colors.black.withValues(alpha: 0.7),
+                    DrinkColors.black.withValues(alpha: 0.7),
                     BlendMode.srcIn,
                   ),
                   child: Image.asset(drink.imageAsset, fit: BoxFit.contain),
